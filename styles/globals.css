@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+/* Globaler Hintergrund */
+body {
+  background-color: #f5f7fa; /* Helles Grau */
+  color: #1f2937; /* Dunkles Grau für Text (anstatt hartem Schwarz) */
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* Links und Buttons als Akzent */
+a,
+button,
+.btn {
+  color: #3b82f6; /* Blau */
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+a:hover,
+button:hover,
+.btn:hover {
+  color: #2563eb; /* Etwas dunkleres Blau beim Hover */
+}
+
+/* Buttons mit Hintergrundfarbe */
+button,
+.btn-primary {
+  background-color: #3b82f6;
+  border: none;
+  border-radius: 6px;
+  padding: 0.6em 1.2em;
+  color: white;
+  font-weight: 600;
+}
+
+button:hover,
+.btn-primary:hover {
+  background-color: #2563eb;
+}
+
+/* Container für Inhalt */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+/* Schatten für Boxen, Karten, etc. */
+.card {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Formulare */
+input, select, textarea {
+  width: 100%;
+  padding: 0.5em;
+  border: 1px solid #d1d5db; /* Hellgrau */
+  border-radius: 4px;
+  font-size: 1rem;
+  color: #374151;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgb(59 130 246 / 0.3);
+}
