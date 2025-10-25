@@ -1,40 +1,46 @@
 name: 🤖 AI Code Review
 
 on:
+  # 🚀 Läuft automatisch bei jedem Push auf den main-Branch
   push:
     branches:
       - main
+
+  # 📅 Läuft automatisch jeden Tag um 22:00 Uhr deutscher Zeit (20:00 UTC)
+  schedule:
+    - cron: "0 20 * * *"
+
+  # 🧩 Ermöglicht manuelles Starten über den „Run workflow“-Button
   workflow_dispatch:
 
 jobs:
   analyze:
+    name: KI-Codeanalyse
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
+      - name: 📥 Repository auschecken
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: 🧠 Node.js einrichten
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - name: Install Dependencies
-        run: npm install
+      - name: 📦 Abhängigkeiten installieren
+        run: npm install openai@6.7.0
 
-      - name: Run AI Bot Analysis
+      - name: 🔍 KI-Codeanalyse durchführen
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
-          node ai-bot.js
+          echo "🔍 Starte tägliche Codeanalyse..."
+          node ai-bot.js > ai-review-report.md 2>&1 || true
 
-      - name: Commit and Push Report
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: 💾 Änderungen committen
         run: |
-          git config user.name "jobdropo-ai-bot"
-          git config user.email "bot@jobdropo.ai"
+          git config --global user.name "AI Reviewer Bot"
+          git config --global user.email "bot@jobdropo.ai"
           git add ai-review-report.md || true
-          git commit -m "🤖 Automated AI code review update" || echo "No changes to commit"
-          git pull origin main --rebase || true
-          git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git main || true
+          git commit -m "🔁 Täglicher AI-Code-Review (automatisch um 22 Uhr)" || echo "Nichts zu committen"
+          git push
