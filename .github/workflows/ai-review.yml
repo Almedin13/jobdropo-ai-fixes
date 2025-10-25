@@ -27,10 +27,13 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: node ai-bot.js
 
-      - name: Commit and Push Report
+            - name: Commit and Push Report
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git config --global user.name "jobdropo-ai-bot"
-          git config --global user.email "bot@jobdropo.ai"
-          git add ai-review-report.md
+          git config user.name "jobdropo-ai-bot"
+          git config user.email "bot@jobdropo.ai"
+          git add ai-review-report.md || true
           git commit -m "🤖 Automated AI code review update" || echo "No changes to commit"
-          git push
+          git pull origin main --rebase || true
+          git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git main || true
