@@ -2,9 +2,9 @@ name: 🤖 AI Code Review
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    branches:
+      - main
+  workflow_dispatch:
 
 jobs:
   analyze:
@@ -17,7 +17,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
 
       - name: Install Dependencies
         run: npm install
@@ -25,9 +25,10 @@ jobs:
       - name: Run AI Bot Analysis
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        run: node ai-bot.js
+        run: |
+          node ai-bot.js
 
-            - name: Commit and Push Report
+      - name: Commit and Push Report
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
