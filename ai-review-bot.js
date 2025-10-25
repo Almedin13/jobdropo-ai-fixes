@@ -1,5 +1,6 @@
 // ai-review-bot.js
 // 🤖 Erstellt automatisch den KI-Code-Review-Bericht (ai-review-report.md)
+// mit integrierter Sicherheitsprüfung
 
 import OpenAI from "openai";
 import fs from "fs";
@@ -27,6 +28,26 @@ function getAllCodeFiles(dir, files = []) {
   return files;
 }
 
+// 🛡️ Schritt: Vorab-Sicherheitsprüfung auf mögliche Secrets
+function scanForSecrets(content, filePath) {
+  const patterns = [
+    { name: "OpenAI API Key", regex: /sk-[a-zA-Z0-9]{20,}/ },
+    { name: "JWT Secret", regex: /jwt|secret|token|api[_-]?key/gi },
+    { name: "AWS Key", regex: /AKIA[0-9A-Z]{16}/ },
+    { name: "Private Key", regex: /-----BEGIN [A-Z ]*PRIVATE KEY-----/ },
+    { name: "Database URI", regex: /mongodb(\+srv)?:\/\/[^\s'"]+/i },
+    { name: "Password", regex: /password\s*[:=]\s*['"][^'"]+['"]/i },
+  ];
+
+  const findings = [];
+  for (const p of patterns) {
+    if (p.regex.test(content)) {
+      findings.push(`⚠️ **${p.name}** gefunden in: \`${filePath}\``);
+    }
+  }
+  return findings;
+}
+
 // 🚀 Schritt 1: Dateien erfassen
 const codeFiles = getAllCodeFiles("./");
 console.log(`📂 ${codeFiles.length} Dateien gefunden.`);
@@ -39,6 +60,13 @@ report += `**Analysierte Dateien:** ${codeFiles.length}\n\n---\n`;
 for (const file of codeFiles.slice(0, 20)) {
   const code = fs.readFileSync(file, "utf8");
   console.log(`Analysiere Datei: ${file}`);
+
+  // 🔎 Sicherheitsprüfung
+  const secrets = scanForSecrets(code, file);
+  if (secrets.length > 0) {
+    report += `## ⚠️ Sicherheitswarnung in ${file}\n${secrets.join("\n")}\n\n---\n`;
+    console.warn(`⚠️ Sicherheitswarnung in ${file}:`, secrets.join(", "));
+  }
 
   const prompt = `
 Du bist ein professioneller Code Reviewer.
